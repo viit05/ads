@@ -1,0 +1,1066 @@
+
+//ASSIGNMENT 1: BST INSERTION,DELETION,SEARCHING AND PRINTING USING INORDER. 
+
+import java.util.*;
+public class bst {
+    static class Node{
+        int data;
+        Node left;
+        Node right;
+
+        Node(int data){
+            this.data=data;
+        }
+    }
+    public static Node insert(Node root, int val){
+        if(root==null){
+            root=new Node(val);
+            return root;
+        }
+        if(root.data>val){
+            root.left=insert(root.left,val);
+        }
+        else{
+            root.right=insert(root.right,val);
+
+        }
+        return root;
+    }
+    public static void inorder(Node root){
+        if(root!=null){
+            
+        inorder(root.left);
+        System.out.println(root.data+"");
+        inorder(root.right);
+        }
+    }
+    public static boolean search(Node root, int key){
+        if(root.data==key){
+            return true;
+        }
+        else if(root==null){
+            return false;
+        }
+        else if(root.data>key){
+            return search(root.left,key);
+        }
+        else{
+            return search(root.right,key);
+        }
+    }
+
+    public static Node delete(Node root, int val){
+        if(root.data>val){
+            root.left=delete(root.left,val);
+        }
+        else if(root.data<val){
+            root.right=delete(root.right,val);
+        }
+        else{                   //rootdata=val
+
+            //case 1(leaf node is to be deleted)
+            if(root.left==null && root.right==null){
+                return null;
+            }
+            //case 2(where the node to be deleted has 1 child node only)
+            if(root.left==null){
+                return root.right;
+            }
+            else if(root.right==null){
+                return root.left;
+            }
+            //case 3(NODE THAT IS TO BE DELETED HAS 2 CHILD)
+            Node IS= InorderSuccessor(root.right);
+            root.data=IS.data;
+            root.right=delete(root.right,IS.data); 
+
+        }
+        return root;
+    }
+    public static Node InorderSuccessor(Node root){
+        while(root.left != null){
+            root=root.left;
+        }
+        return root;
+    }
+
+
+    public static void main(String args[]){
+        Node root=null;
+        int val[]={5,4,2,7,8};
+            
+        for(int i=0;i<val.length;i++){
+                root=insert(root, val[i]);
+
+            }
+            inorder(root);
+            System.out.println();
+            if(search(root,4)){
+                System.out.println("Found");
+            }
+            else{
+                System.out.println("not found" );
+            }
+            delete(root,4);
+            inorder(root);
+            System.out.println();
+    }
+}
+--------------------------------------------DONE------------------------------------------------------------------------------------
+
+// ASSIGNMENT 2 : INORDER PREORDER POSTORDER TRAVERSALS (RECURSIVE AND NON-RECURSIVE)
+
+
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Scanner;
+import java.util.Stack;
+
+
+public class expressionEval {
+static Node root;
+
+static class Node{
+char data;
+Node left, right;
+
+public Node(char data) {
+this.data=data;
+left=right=null;
+}
+}
+
+public static void main(String[] args) {
+
+Scanner in=new Scanner(System.in);
+int continues=1;
+while(continues==1) {
+
+System.out.println("Menu:");
+System.out.println("1:Enter expression");
+System.out.println("2:Recursive Inorder");
+System.out.println("3:Non-Recursive Inorder");
+System.out.println("4:Recursive Preorder");
+System.out.println("5:Non-Recursive Preorder");
+System.out.println("6:Recursive Postorder");
+System.out.println("7:Non-Recursive Postorder");
+System.out.println("8:BFS");
+System.out.println("<Other Keys>:Exit");
+System.out.print("Enter choice: ");
+int choice;
+try {
+choice=in.nextInt();
+}
+catch (Exception e) {
+choice=9;
+}
+System.out.println("\n");
+switch(choice) {
+case 1:
+System.out.print("Enter expression: ");
+String str=in.next();
+convert(str);
+break;
+case 2:
+System.out.println("Recursive Inorder: ");
+recurinorder(root);
+break;
+case 3:
+System.out.println("Non-Recursive Inorder: ");
+nonrecurinorder(root);
+break;
+case 4:
+System.out.println("Recursive Preorder:");
+recurpreorder(root);
+break;
+case 5:
+System.out.println("Non-recursive Preorder:");
+nonrecurpreorder(root);
+break;
+case 6:
+System.out.println("Recursive Postorder:");
+recurpostorder(root);
+break;
+case 7:
+System.out.println("Non-Recursive Postorder:");
+nonrecurpostorder(root);
+break;
+case 8:
+System.out.println("BFS:");
+bfs(root);
+break;
+default:
+continues=0;
+break;
+}
+System.out.println("\n\n");
+}
+in.close();
+
+}
+
+public static boolean isOperator(char c) {
+return (c == '+' || c == '-' || c == '*' || c == '/');
+}
+
+public static void convert(String postfix) {
+
+Stack<Node> stack=new Stack<Node>();
+
+for(char ch: postfix.toCharArray()) {
+if(!isOperator(ch)) {
+Node temp=new Node(ch);
+stack.push(temp);
+}
+else {
+Node op1, op2, temp;
+temp=new Node(ch);
+op1=stack.pop();
+op2=stack.pop();
+temp.left=op2;
+temp.right=op1;
+stack.push(temp);
+}
+}
+root=stack.pop();
+}
+
+public static void recurinorder(Node root) {
+if(root==null) {
+return;
+}
+else {
+Node temp=root;
+
+recurinorder(temp.left);
+
+System.out.print(temp.data+" ");
+
+recurinorder(temp.right);
+
+}
+}
+
+public static void recurpreorder(Node root) {
+if(root==null) {
+return;
+}
+else {
+Node temp=root;
+
+System.out.print(temp.data+" ");
+recurpreorder(temp.left);
+recurpreorder(temp.right);
+
+}
+}
+
+public static void recurpostorder(Node root) {
+if(root==null) {
+return;
+}
+else {
+Node temp=root;
+
+recurpostorder(temp.left);
+
+
+
+recurpostorder(temp.right);
+System.out.print(temp.data+" ");
+
+}
+}
+
+public static void nonrecurinorder(Node root) {
+Stack<Node> stack = new Stack<>();
+Node current = root;
+
+while (current != null || !stack.isEmpty()) {
+while (current != null) {
+stack.push(current);
+current = current.left;
+}
+current = stack.pop();
+System.out.print(current.data + " ");
+current = current.right;
+}
+
+}
+
+public static void nonrecurpreorder(Node root) {
+Stack<Node> stack = new Stack<>();
+stack.push(root);
+
+while (!stack.isEmpty()) {
+Node current = stack.pop();
+System.out.print(current.data + " ");
+if (current.right != null) {
+stack.push(current.right);
+}
+if (current.left != null) {
+stack.push(current.left);
+}
+}
+}
+
+public static void nonrecurpostorder(Node root) {
+Stack<Node> stack1 = new Stack<>();
+Stack<Node> stack2 = new Stack<>();
+stack1.push(root);
+
+while (!stack1.isEmpty()) {
+Node current = stack1.pop();
+stack2.push(current);
+
+if (current.left != null) {
+stack1.push(current.left);
+}
+if (current.right != null) {
+stack1.push(current.right);
+}
+}
+
+while (!stack2.isEmpty()) {
+System.out.print(stack2.pop().data + " ");
+}
+}
+
+public static void bfs(Node root) {
+if (root == null) {
+System.out.println("The tree is empty.");
+return;
+}
+
+Queue<Node> queue = new LinkedList<>();
+queue.add(root);
+
+while (!queue.isEmpty()) {
+Node current = queue.poll();
+System.out.print(current.data + " ");
+
+if (current.left != null) {
+queue.add(current.left);
+}
+
+if (current.right != null) {
+queue.add(current.right);
+}
+}
+}
+}
+
+
+
+----------------------------------------------DONE-----------------------------------------------------------
+
+
+
+/*  ASSIGNMENT 3 : KRUSKALS ALGORITHM : Find the total weight of the minimum spanning tree, as well as one specific minimum
+spanning tree using Kruskal’s algorithm. */
+
+import java.util.*;
+
+class Graph {
+  class Edge implements Comparable<Edge> {
+    int src, dest, weight;
+
+    public int compareTo(Edge compareEdge) {
+      return this.weight - compareEdge.weight;
+    }
+  };
+
+  // Union
+  class subset {
+    int parent, rank;
+  };
+
+  int vertices, edges;
+  Edge edge[];
+
+  // Graph creation
+  Graph(int v, int e) {
+    vertices = v;
+    edges = e;
+    edge = new Edge[edges];
+    for (int i = 0; i < e; ++i)
+      edge[i] = new Edge();
+  }
+
+  int find(subset subsets[], int i) {
+    if (subsets[i].parent != i)
+      subsets[i].parent = find(subsets, subsets[i].parent);
+    return subsets[i].parent;
+  }
+
+  void Union(subset subsets[], int x, int y) {
+    int xroot = find(subsets, x);
+    int yroot = find(subsets, y);
+
+    if (subsets[xroot].rank < subsets[yroot].rank)
+      subsets[xroot].parent = yroot;
+    else if (subsets[xroot].rank > subsets[yroot].rank)
+      subsets[yroot].parent = xroot;
+    else {
+      subsets[yroot].parent = xroot;
+      subsets[xroot].rank++;
+    }
+  }
+
+  // Applying Krushkal Algorithm
+  void KruskalAlgo() {
+      
+    Edge result[] = new Edge[vertices];
+    int minCost = 0;
+    int e = 0;
+    int i = 0;
+    for (i = 0; i < vertices; ++i)
+      result[i] = new Edge();
+
+    // Sorting the edges
+    Arrays.sort(edge);
+    subset subsets[] = new subset[vertices];
+    for (i = 0; i < vertices; ++i)
+      subsets[i] = new subset();
+
+    for (int v = 0; v < vertices; ++v) {
+      subsets[v].parent = v;
+      subsets[v].rank = 0;
+    }
+    i = 0;
+    while (e < vertices - 1) {
+      Edge next_edge = new Edge();
+      next_edge = edge[i++];
+      int x = find(subsets, next_edge.src);
+      int y = find(subsets, next_edge.dest);
+      if (x != y) {
+        result[e++] = next_edge;
+        Union(subsets, x, y);
+      }
+    }
+    for (i = 0; i < e; ++i){
+      System.out.println(result[i].src + " - " + result[i].dest + ": " + result[i].weight);
+      minCost += result[i].weight; 
+    }
+  
+System.out.println("Total cost of MST: " + minCost);
+}
+  public static void main(String[] args) {
+    int vertices = 6; // Number of vertices
+    int edges = 8; // Number of edges
+    Graph G = new Graph(vertices, edges);
+
+    G.edge[0].src = 0;
+    G.edge[0].dest = 1;
+    G.edge[0].weight = 4;
+
+    G.edge[1].src = 0;
+    G.edge[1].dest = 2;
+    G.edge[1].weight = 4;
+
+    G.edge[2].src = 1;
+    G.edge[2].dest = 2;
+    G.edge[2].weight = 2;
+
+    G.edge[3].src = 2;
+    G.edge[3].dest = 3;
+    G.edge[3].weight = 3;
+
+    G.edge[4].src = 2;
+    G.edge[4].dest = 5;
+    G.edge[4].weight = 2;
+
+    G.edge[5].src = 2;
+    G.edge[5].dest = 4;
+    G.edge[5].weight = 4;
+
+    G.edge[6].src = 3;
+    G.edge[6].dest = 4;
+    G.edge[6].weight = 3;
+
+    G.edge[7].src = 5;
+    G.edge[7].dest = 4;
+    G.edge[7].weight = 3;
+    G.KruskalAlgo();
+  }
+}
+
+
+----------------------------------------------DONE-----------------------------------------------------------
+
+
+/* ASSIGNMENT 4 :  DJIKSTRA'S ALGORITHM  A customer wants to travel from source A to destination B. He books a cab from source A to
+reach destination B. Calculate a shortest path by avoiding real time traffic to reach destination B. */
+
+import java.util.*;
+
+class Graph4 {
+    private int V; // No. of vertices
+    private List<List<Node>> adj; // Adjacency List
+
+    // Node class to represent a weighted edge
+    private static class Node implements Comparable<Node> {
+        int v;
+        int weight;
+
+        Node(int v, int weight) {
+            this.v = v;
+            this.weight = weight;
+        }
+
+        public int compareTo(Node other) {
+            return this.weight - other.weight;
+        }
+    }
+
+    Graph4(int V) {
+        this.V = V;
+        adj = new ArrayList<>(V);
+        for (int i = 0; i < V; i++) {
+            adj.add(new ArrayList<>());
+        }
+    }
+
+    void addEdge(int u, int v, int weight) {
+        adj.get(u).add(new Node(v, weight));
+        adj.get(v).add(new Node(u, weight));
+    }
+
+    void dijkstra(int source, int destination) {
+        int[] dist = new int[V];
+        Arrays.fill(dist, Integer.MAX_VALUE);
+        dist[source] = 0;
+
+        PriorityQueue<Node> pq = new PriorityQueue<>();
+        pq.offer(new Node(source, 0));
+
+        while (!pq.isEmpty()) {
+            Node curr = pq.poll();
+            int u = curr.v;
+
+            if (u == destination) {
+                System.out.println("Shortest distance from source to destination: " + curr.weight);
+                break;
+            }
+
+            if (curr.weight > dist[u]) {
+                continue;
+            }
+
+            for (Node neighbor : adj.get(u)) {
+                int v = neighbor.v;
+                int weight = neighbor.weight;
+
+                if (dist[u] + weight < dist[v]) {
+                    dist[v] = dist[u] + weight;
+                    pq.offer(new Node(v, dist[v]));
+                }
+            }
+        }
+    }
+}
+
+public class ShortestPath {
+    public static void main(String[] args) {
+        int V = 6; // Number of vertices
+        Graph4 g = new Graph4(V);
+
+        // Adding weighted edges (considering real-time traffic)
+        g.addEdge(0, 1, 4);
+        g.addEdge(0, 2, 2);
+        g.addEdge(1, 2, 3);
+        g.addEdge(1, 3, 2);
+        g.addEdge(1, 4, 3);
+        g.addEdge(2, 3, 4);
+        g.addEdge(3, 4, 5);
+        g.addEdge(3, 5, 7);
+        g.addEdge(4, 5, 4);
+
+        int source = 0; // Source node A
+        int destination = 5; // Destination node B
+
+        g.dijkstra(source, destination);
+    }
+}
+
+
+----------------------------------------------DONE-----------------------------------------------------------
+
+/*  ASSIGNMENT 5: USING GRAPHS CONSTRUCT a friends’ network on face book social web site. Model it as a graph to represent each node
+              as a user and a link to represent the friend relationship between them. Store data such as date of birth,
+              number of comments for each user.
+                                    1. Find who is having maximum friends?
+                                    2. Find who has post maximum and minimum comments?
+                                    3. Find users having birthday in this month?    */
+
+
+
+import java.time.LocalDate;
+import java.time.Month;
+import java.util.*;
+
+class User {
+    String name;
+    LocalDate dateOfBirth;
+    int numComments;
+    List<User> friends;
+
+    User(String name, LocalDate dateOfBirth, int numComments) {
+        this.name = name;
+        this.dateOfBirth = dateOfBirth;
+        this.numComments = numComments;
+        this.friends = new ArrayList<>();
+    }
+
+    void addFriend(User friend) {
+        friends.add(friend);
+    }
+}
+
+public class FriendsNetwork {
+    private static Map<String, User> users = new HashMap<>();
+    private static Scanner scanner = new Scanner(System.in);
+
+    public static void main(String[] args) {
+        int choice;
+        do {
+            System.out.println("\nFriends Network Menu:");
+            System.out.println("1. Create a new user");
+            System.out.println("2. Add friends for a user");
+            System.out.println("3. Add comments for a user");
+            System.out.println("4. Find the user with the maximum number of friends");
+            System.out.println("5. Find the user with the maximum number of comments");
+            System.out.println("6. Find the user with the minimum number of comments");
+            System.out.println("7. Find users having a birthday in the current month");
+            System.out.println("8. Exit");
+            System.out.print("Enter your choice: ");
+            choice = scanner.nextInt();
+            scanner.nextLine(); // Consume newline character
+
+            switch (choice) {
+                case 1:
+                    createUser();
+                    break;
+                case 2:
+                    addFriends();
+                    break;
+                case 3:
+                    addComments();
+                    break;
+                case 4:
+                    findUserWithMaxFriends();
+                    break;
+                case 5:
+                    findUserWithMaxComments();
+                    break;
+                case 6:
+                    findUserWithMinComments();
+                    break;
+                case 7:
+                    findUsersWithBirthdayInCurrentMonth();
+                    break;
+                case 8:
+                    System.out.println("Exiting...");
+                    break;
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+            }
+        } while (choice != 8);
+    }
+
+    private static void createUser() {
+        System.out.print("Enter the name of the user: ");
+        String name = scanner.nextLine();
+
+        System.out.print("Enter the date of birth (yyyy-mm-dd): ");
+        String dateOfBirthStr = scanner.nextLine();
+        LocalDate dateOfBirth = LocalDate.parse(dateOfBirthStr);
+
+        System.out.print("Enter the number of comments: ");
+        int numComments = scanner.nextInt();
+        scanner.nextLine(); // Consume newline character
+
+        User user = new User(name, dateOfBirth, numComments);
+        users.put(name, user);
+        System.out.println("User created successfully.");
+    }
+
+    private static void addFriends() {
+        System.out.print("Enter the name of the user: ");
+        String userName = scanner.nextLine();
+
+        if (!users.containsKey(userName)) {
+            System.out.println("User not found.");
+            return;
+        }
+
+        User user = users.get(userName);
+
+        System.out.print("Enter the names of friends (separated by commas): ");
+        String friendNames = scanner.nextLine();
+        String[] names = friendNames.split(",");
+
+        for (String name : names) {
+            name = name.trim();
+            if (users.containsKey(name)) {
+                User friend = users.get(name);
+                user.addFriend(friend);
+                friend.addFriend(user); // Add the friendship in both directions
+            } else {
+                System.out.println("User " + name + " not found.");
+            }
+        }
+    }
+
+    private static void addComments() {
+        System.out.print("Enter the name of the user: ");
+        String userName = scanner.nextLine();
+
+        if (!users.containsKey(userName)) {
+            System.out.println("User not found.");
+            return;
+        }
+
+        User user = users.get(userName);
+
+        System.out.print("Enter the number of comments to add: ");
+        int commentsToAdd = scanner.nextInt();
+        scanner.nextLine(); // Consume newline character
+
+        user.numComments += commentsToAdd;
+        System.out.println("Comments added successfully.");
+    }
+
+    private static void findUserWithMaxFriends() {
+        int maxFriends = 0;
+        User maxFriendsUser = null;
+
+        for (User user : users.values()) {
+            if (user.friends.size() > maxFriends) {
+                maxFriends = user.friends.size();
+                maxFriendsUser = user;
+            }
+        }
+
+        if (maxFriendsUser != null) {
+            System.out.println("User with maximum friends: " + maxFriendsUser.name);
+        } else {
+            System.out.println("No users found.");
+        }
+    }
+
+    private static void findUserWithMaxComments() {
+        int maxComments = 0;
+        User maxCommentsUser = null;
+
+        for (User user : users.values()) {
+            if (user.numComments > maxComments) {
+                maxComments = user.numComments;
+                maxCommentsUser = user;
+            }
+        }
+
+        if (maxCommentsUser != null) {
+            System.out.println("User with maximum comments: " + maxCommentsUser.name);
+        } else {
+            System.out.println("No users found.");
+        }
+    }
+
+    private static void findUserWithMinComments() {
+        int minComments = Integer.MAX_VALUE;
+        User minCommentsUser = null;
+
+        for (User user : users.values()) {
+            if (user.numComments < minComments) {
+                minComments = user.numComments;
+                minCommentsUser = user;
+            }
+        }
+
+        if (minCommentsUser != null) {
+            System.out.println("User with minimum comments: " + minCommentsUser.name);
+        } else {
+            System.out.println("No users found.");
+        }
+    }
+
+    private static void findUsersWithBirthdayInCurrentMonth() {
+        List<User> birthdayUsers = new ArrayList<>();
+        Month currentMonth = LocalDate.now().getMonth();
+
+        for (User user : users.values()) {
+            if (user.dateOfBirth.getMonth() == currentMonth) {
+                birthdayUsers.add(user);
+            }
+        }
+
+        if (!birthdayUsers.isEmpty()) {
+            System.out.println("Users having a birthday in the current month:");
+            for (User user : birthdayUsers) {
+                System.out.println(user.name);
+            }
+        } else {
+            System.out.println("No users found with a birthday in the current month.");
+        }
+    }
+}
+
+
+----------------------------------------------DONE-----------------------------------------------------------
+
+
+/* ASSIGNMENT 6: USING HEAP DATASTRUCTURE Read the marks obtained by students of second year in an online examination of particular subject.
+   Find out maximum and minimum marks obtained in that subject.  */
+
+
+
+import java.util.PriorityQueue;
+import java.util.Scanner;
+
+public class MaxMinMarks {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter the number of students: ");
+        int n = scanner.nextInt();
+
+        // Create a min-heap and a max-heap
+        PriorityQueue<Integer> minHeap = new PriorityQueue<>();
+        PriorityQueue<Integer> maxHeap = new PriorityQueue<>((a, b) -> b - a);
+
+        System.out.println("Enter the marks obtained by each student:");
+        for (int i = 0; i < n; i++) {
+            int mark = scanner.nextInt();
+            minHeap.offer(mark);
+            maxHeap.offer(mark);
+        }
+
+        int minMark = minHeap.peek();
+        int maxMark = maxHeap.peek();
+
+        System.out.println("Minimum mark obtained: " + minMark);
+        System.out.println("Maximum mark obtained: " + maxMark);
+    }
+}
+
+----------------------------------------------DONE-----------------------------------------------------------
+
+/* ASSIGNMENT 7 : USING HASHTABLE Implement IsSpell utility 1. Create Hashtable and write in file 2. Enter Word 3. Search  word 4. Exit  */
+
+import java.io.*;
+import java.util.*;
+
+public class IsSpellUtility {
+    public static void main(String[] args) {
+        Hashtable<String, Integer> dictionary = new Hashtable<>();
+        Scanner scanner = new Scanner(System.in);
+
+        // Load dictionary from file
+        loadDictionary(dictionary);
+
+        while (true) {
+            System.out.println("1. Enter Word");
+            System.out.println("2. Search Word");
+            System.out.println("3. Remove Word");
+            System.out.println("4. Exit");
+            System.out.print("Enter your choice: ");
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // Consume newline
+
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter the word to add to dictionary: ");
+                    String wordToAdd = scanner.nextLine();
+                    addWordToDictionary(dictionary, wordToAdd);
+                    saveDictionaryToFile(dictionary);
+                    break;
+                case 2:
+                    System.out.print("Enter the word to search in dictionary: ");
+                    String wordToSearch = scanner.nextLine();
+                    searchWordInDictionary(dictionary, wordToSearch);
+                    break;
+                case 3:
+                    System.out.print("Enter the word to remove from dictionary: ");
+                    String wordToRemove = scanner.nextLine();
+                    removeWordFromDictionary(dictionary, wordToRemove);
+                    saveDictionaryToFile(dictionary);
+                    break;
+                case 4:
+                    System.out.println("Exiting program...");
+                    System.exit(0);
+                    break;
+                default:
+                    System.out.println("Invalid choice. Please enter a valid option.");
+            }
+        }
+    }
+
+    private static void loadDictionary(Hashtable<String, Integer> dictionary) {
+        try (BufferedReader reader = new BufferedReader(new FileReader("dictionary.txt"))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                dictionary.put(line.trim().toLowerCase(), 1);
+            }
+        } catch (IOException e) {
+            System.out.println("Error loading dictionary: " + e.getMessage());
+        }
+    }
+
+    private static void addWordToDictionary(Hashtable<String, Integer> dictionary, String word) {
+        dictionary.put(word.trim().toLowerCase(), 1);
+        System.out.println("Word added to dictionary.");
+    }
+
+    private static void searchWordInDictionary(Hashtable<String, Integer> dictionary, String word) {
+        if (dictionary.containsKey(word.trim().toLowerCase())) {
+            System.out.println("Word found in dictionary.");
+        } else {
+            System.out.println("Word not found in dictionary.");
+        }
+    }
+
+    private static void removeWordFromDictionary(Hashtable<String, Integer> dictionary, String word) {
+        if (dictionary.containsKey(word.trim().toLowerCase())) {
+            dictionary.remove(word.trim().toLowerCase());
+            System.out.println("Word removed from dictionary.");
+        } else {
+            System.out.println("Word not found in dictionary.");
+        }
+    }
+
+    private static void saveDictionaryToFile(Hashtable<String, Integer> dictionary) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("dictionary.txt"))) {
+            for (String word : dictionary.keySet()) {
+                writer.write(word);
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            System.out.println("Error saving dictionary to file: " + e.getMessage());
+        }
+    }
+}
+
+
+
+----------------------------------------------DONE-----------------------------------------------------------
+
+
+ASSIGNMENT 8 : USING JAVA FILE HANDLING Implement student database (Roll number, Name of student, Gr. Number, Class etc.) using text
+or binary files in JAVA.
+
+
+import java.io.*;
+class StudentRecords{
+    
+    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+    public void addRecords() throws IOException
+    {
+    // Create or Modify a file for Database
+    PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter("studentRecords.txt",true)));
+    String name, Student_class;
+    int roll_no, grnumber;
+    String s;
+    boolean addMore = false;
+    // Read Data
+    do
+    {
+     System.out.print("\nEnter name: ");
+     name = br.readLine();
+   
+     System.out.print("Class ");
+     Student_class = br.readLine();
+   
+      System.out.print("Roll number: ");
+     roll_no= Integer.parseInt(br.readLine());
+   
+    
+     System.out.print("Grade number: ");
+     grnumber= Integer.parseInt(br.readLine());
+   
+     // Print to File
+     pw.println(name);
+     pw.println(Student_class);
+     pw.println(roll_no);
+     pw.println(grnumber);
+    
+     
+     System.out.print("\nRecords added successfully !\n\nDo you want to add more records ? (y/n) : ");
+     s = br.readLine();
+     if(s.equalsIgnoreCase("y"))
+     {
+      addMore = true;
+      System.out.println();
+     }
+     else
+      addMore = false;
+    }
+    while(addMore);
+    pw.close();
+    showMenu();
+    }
+    public void readRecords() throws IOException
+    {
+    try
+    {
+     // Open the file
+     BufferedReader file = new BufferedReader(new
+     FileReader("studentRecords.txt"));
+     String name;
+     int i=1;
+     // Read records from the file
+     while((name = file.readLine()) != null)
+     {
+      System.out.println("S.No. : " +(i++));
+      System.out.println("-------------");
+      System.out.println("\nName: " +name);
+      System.out.println("Student Class : "+file.readLine());
+      System.out.println("Roll number : "+file.readLine());
+      System.out.println("Grade Number: "+file.readLine());
+    
+      System.out.println();
+     }
+     file.close();
+     showMenu();
+    }
+    catch(FileNotFoundException e)
+    {
+     System.out.println("\nERROR : File not Found !!!");
+    }
+    }
+    public void clear() throws IOException
+    {
+    // Create a blank file
+    PrintWriter pw = new PrintWriter(new BufferedWriter(new
+    FileWriter("studentRecords.txt")));
+    pw.close();
+    System.out.println("\nAll Records cleared successfully !");
+    for(int i=0;i<999999999;i++); // Wait for some time
+    showMenu();
+    }
+    public void showMenu() throws IOException
+    {
+    System.out.print("1 : Add Records\n2 : Display Records\n3 : Clear All Records\n4 : Exit\n\nYour Choice : ");
+    int choice = Integer.parseInt(br.readLine());
+    switch(choice)
+    {
+     case 1:    addRecords();
+      break;
+     case 2:    readRecords();
+      break;
+     case 3:    clear();
+      break;
+     case 4:    System.exit(1);
+      break;
+     default:    System.out.println("\nInvalid Choice !");
+      break;
+    }  }
+    public static void main(String args[]) throws IOException
+    {
+    StudentRecords call = new StudentRecords();
+    call.showMenu();
+    }}
+   
+
+
+----------------------------------------------DONE-----------------------------------------------------------
